@@ -1,14 +1,30 @@
 import React, { Component } from 'react'
 import Card from '../Card'
+import PubSub from 'pubsub-js'
 
 export default class List extends Component {
+    state={
+        data:[],//存储用户信息
+        isFirst:true,//是否为初始显示
+        isLoading:false,//标识是否为加载中
+        errorMsg:''//存储错误
+    }
+componentDidMount(){
+    // 我订阅了一个名为search的消息  _为消息名，data为传来的数据
+    this.msgid=PubSub.subscribe('search',(_,data)=>{
+        this.setState(data)
+    })
+}
+// 订阅需要取消
+componentWillUnmount(){
+    PubSub.unsubscribe(this.msgid)
+}
+
     render() {
         const {data,isFirst,
             isLoading,
-            errorMsg}=this.props
-
+            errorMsg}=this.state
        
-            
         return (
             <div className="row">
                 {

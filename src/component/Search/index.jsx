@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react'
 import axios from 'axios'
+import PubSub from 'pubsub-js';
 export default class Search extends Component {
 
   keywordContarin=React.createRef();
@@ -9,20 +10,23 @@ export default class Search extends Component {
     //检验是否为空
 if(!value.trim()) return alert('输入不能为空')
 //点击后页面状态isFirst变成false 
-    this.props.updateState({isFirst:false, isLoading:true})
+    // this.props.updateState({isFirst:false, isLoading:true})
+    // 将消息发布给List
+    PubSub.publish('search',{isFirst:false, isLoading:true})
     axios.get(
       `https://api.github.com/search/users?q=${value}`
     ).then(response=>{
       const{items}=response.data
-      //数据接收成功后 isLoading变为false
-      this.props.updateState({isLoading:false,data:items})
-
+      //通知List 数据接收成功后 isLoading变为false
+      // this.props.updateState({isLoading:false,data:items})
+      PubSub.publish('search',{isLoading:false,data:items})
       console.log('成功',items)
     },error=>{
-      console.log(error)
-      debugger
+      // console.log(error)
+      // debugger
       //数据接收失败后 isLoading变为false 将error信息传递给父元素
-      this.props.updateState({isLoading:false,errorMsg:error.message})
+      // this.props.updateState({isLoading:false,errorMsg:error.message})
+      PubSub.publish('search',{isLoading:false,errorMsg:error.message})
       console.log('失败了',error)
     })
     
