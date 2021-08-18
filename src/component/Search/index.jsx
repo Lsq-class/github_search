@@ -10,7 +10,7 @@ export default class Search extends Component {
     //检验是否为空
 if(!value.trim()) return alert('输入不能为空')
 //点击后页面状态isFirst变成false 
-    // this.props.updateState({isFirst:false, isLoading:true})
+    
     // 将消息发布给List
     PubSub.publish('search',{isFirst:false, isLoading:true})
     axios.get(
@@ -18,14 +18,13 @@ if(!value.trim()) return alert('输入不能为空')
     ).then(response=>{
       const{items}=response.data
       //通知List 数据接收成功后 isLoading变为false
-      // this.props.updateState({isLoading:false,data:items})
+      
       PubSub.publish('search',{isLoading:false,data:items})
       console.log('成功',items)
     },error=>{
       // console.log(error)
       // debugger
-      //数据接收失败后 isLoading变为false 将error信息传递给父元素
-      // this.props.updateState({isLoading:false,errorMsg:error.message})
+      //数据接收失败后 isLoading变为false 将error信息发布给List
       PubSub.publish('search',{isLoading:false,errorMsg:error.message})
       console.log('失败了',error)
     })
